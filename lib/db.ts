@@ -34,11 +34,19 @@ export interface NewsletterSubscriberRecord {
   subscribed_at: string;
 }
 
+export interface RevokedSessionRecord {
+  jti: string;
+  user_id: string;
+  revoked_at: string;
+  reason?: string;
+}
+
 interface PortfolioDatabase {
   users: UserRecord[];
   contact_messages: ContactMessageRecord[];
   chat_messages: ChatMessageRecord[];
   newsletter_subscribers: NewsletterSubscriberRecord[];
+  revoked_sessions: RevokedSessionRecord[];
 }
 
 const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
@@ -61,6 +69,7 @@ function ensureDataFile(): void {
       contact_messages: [],
       chat_messages: [],
       newsletter_subscribers: [],
+      revoked_sessions: [],
     };
     fs.writeFileSync(DB_PATH, JSON.stringify(emptyDb, null, 2), 'utf-8');
   }
@@ -76,6 +85,7 @@ function readDb(): PortfolioDatabase {
     contact_messages: parsed.contact_messages ?? [],
     chat_messages: parsed.chat_messages ?? [],
     newsletter_subscribers: parsed.newsletter_subscribers ?? [],
+    revoked_sessions: parsed.revoked_sessions ?? [],
   };
 }
 
@@ -238,4 +248,56 @@ export function deleteNewsletterSubscriber(id: string): boolean {
 
   writeDb(db);
   return true;
+}
+
+// ─── Session Revocation ───────────────────────────────────────────────────────
+
+export function revokeSession(jti: string, userId: string, reason?: string): void {
+  ensureInitialized();
+  const db = readDb();
+  const already = db.revoked_sessions.some((r) => r.jti === jti);
+  if (already) return;
+  db.revoked_sessions.push({ jti, user_id: userId, revoked_at: nowIso(), reason });
+  writeDb(db);
+}
+
+export function revokeAllUserSessions(userId: string, reason?: string): void {
+  ensureInitialized();
+  const db = readDb();
+  // Mark a special wildcard record keyed by user_id so all JTIs for that user are invalid
+  const existing = db.revoked_sessions.find((r) => r.jti === `user:${userId}`);
+  if (existing) {
+    existing.revoked_at = nowIso();
+    existing.reason = reason;
+  } else {
+    db.revoked_sessions.push({ jti: `user:${userId}`, user_id: userId, revoked_at: nowIso(), reason });
+  }
+  writeDb(db);
+}
+
+export function isSessionRevoked(jti: string, userId: string): boolean {
+  ensureInitialized();
+  const db = readDb();
+  // Check specific JTI or wildcard user revocation
+  return db.revoked_sessions.some((r) => r.jti === jti || r.jti === `user:${userId}`);
+}
+
+export function listRevokedSessions(): RevokedSessionRecord[] {
+  ensureInitialized();
+  return readDb().revoked_sessions.sort((a, b) => b.revoked_at.localeCompare(a.revoked_at));
+}
+
+export function clearExpiredRevocations(olderThanDays = 30): void {
+  ensureInitialized();
+  const db = readDb();
+  const cutoff = new Date(Date.now() - olderThanDays * 86400000).toISOString();
+  db.revoked_sessions = db.revoked_sessions.filter((r) => r.revoked_at > cutoff);
+  writeDb(db);
+}
+
+// ─── Users listing (admin) ───────────────────────────────────────────────────
+
+export function listUsers(): Omit<UserRecord, 'password'>[] {
+  ensureInitialized();
+  return readDb().users.map(({ password: _p, ...u }) => u);
 }

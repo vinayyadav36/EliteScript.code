@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, generateId } from '@/lib/db';
+import { getUserByEmail, createUser } from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
-  throw new Error('JWT_SECRET environment variable is required in production');
-}
-const SECRET = JWT_SECRET || 'fallback-dev-secret-change-in-production';
+import { signToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -20,14 +14,12 @@ export async function POST(req: NextRequest) {
   if (!password || password.length < 6)
     return NextResponse.json({ message: 'Password must be at least 6 characters' }, { status: 400 });
 
-  const db = getDb();
-  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+  const existing = getUserByEmail(email);
   if (existing) return NextResponse.json({ message: 'User already exists' }, { status: 400 });
 
   const hash = await bcrypt.hash(password, 10);
-  const id = generateId();
-  db.prepare('INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)').run(id, name.trim(), email.trim(), hash, 'user');
+  const user = createUser({ name: name.trim(), email: email.trim(), password: hash, role: 'user' });
 
-  const token = jwt.sign({ user: { id, role: 'user' } }, SECRET, { expiresIn: '7d' });
-  return NextResponse.json({ token }, { status: 201 });
+  const { token, jti } = signToken({ id: user.id, role: user.role });
+  return NextResponse.json({ token, jti }, { status: 201 });
 }

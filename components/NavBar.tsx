@@ -3,12 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Code2, User, Phone, BookOpen, Briefcase, MessageSquare, Shield, Menu, X } from 'lucide-react';
+import {
+  Code2, User, Phone, BookOpen, Briefcase, MessageSquare,
+  Shield, Menu, X, BarChart2, Layers
+} from 'lucide-react';
 
 const navLinks = [
   { icon: User, text: 'About', href: '/about' },
   { icon: BookOpen, text: 'Journey', href: '/journey' },
   { icon: Briefcase, text: 'Portfolio', href: '/portfolio' },
+  { icon: Layers, text: 'Hub', href: '/hub' },
+  { icon: BarChart2, text: 'Dashboards', href: '/dashboard-generator' },
   { icon: MessageSquare, text: 'Chat', href: '/chat' },
   { icon: Phone, text: 'Contact', href: '/contact' },
   { icon: Shield, text: 'Admin', href: '/admin' },
@@ -28,13 +33,15 @@ export default function NavBar() {
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-5">
             {navLinks.map(({ icon: Icon, text, href }) => (
               <Link
                 key={text}
                 href={href}
                 className={`flex items-center space-x-1 text-sm transition-colors ${
-                  pathname === href ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'
+                  pathname === href || pathname?.startsWith(href + '/')
+                    ? 'text-yellow-500'
+                    : 'text-gray-300 hover:text-yellow-500'
                 }`}
               >
                 <Icon className="w-4 h-4" />

@@ -89,6 +89,7 @@
     "typescript": "5.2.2",
     "utf-8-validate": "^6.0.5",
     "vaul": "^0.9.9",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
