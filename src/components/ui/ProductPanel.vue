@@ -3,12 +3,12 @@ import { useProductsStore } from '@/stores/products'
 import { X, MessageCircle, Mail, ShoppingBag, Store, FileText } from 'lucide-vue-next'
 import { watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useContactInfo } from '@/composables/useContactInfo'
 
 const store = useProductsStore()
 const router = useRouter()
 
-const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '917355534385'
-const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'hello@saltedhash.in'
+const { whatsappNumber, contactEmail } = useContactInfo()
 
 const whatsappUrl = computed(() => {
   const name = store.selectedProduct?.name || ''

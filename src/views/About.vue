@@ -29,7 +29,7 @@ onMounted(() => {
         </p>
       </div>
 
-      <div class="group relative bg-background border border-foreground/10 p-8 md:p-12 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <div class="group relative bg-background border border-foreground/10 p-8 md:p-12 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" v-card-tilt>
         <div class="about-element text-xs font-mono uppercase tracking-widest text-foreground/50 mb-12">The Founder</div>
         <h3 class="about-element text-3xl mb-6">Vinay</h3>
         <p class="about-element text-foreground/70 mb-8 leading-relaxed">

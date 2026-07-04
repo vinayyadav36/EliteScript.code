@@ -57,8 +57,8 @@ onMounted(() => {
         <router-link to="/studio" class="group flex items-center gap-2 bg-neutral-900 text-white px-7 py-3.5 text-sm uppercase tracking-widest font-medium hover:bg-tech transition-all duration-300" v-ripple>
           Enter Studio <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </router-link>
-        <router-link to="/triu" class="group flex items-center gap-2 border border-neutral-200 px-7 py-3.5 text-sm uppercase tracking-widest font-medium hover:border-naturals hover:text-naturals transition-all duration-300">
-          TRIU Naturals <ArrowRight class="w-4 h-4" />
+        <router-link to="/triu" class="group flex items-center gap-2 border border-neutral-200 px-7 py-3.5 text-sm uppercase tracking-widest font-medium hover:border-naturals hover:text-naturals transition-all duration-300" v-ripple>
+          TRIU Naturals <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </router-link>
       </div>
     </section>
@@ -79,6 +79,7 @@ onMounted(() => {
             :key="product.$id"
             @click="store.openProductPanel(product)"
             class="shrink-0 w-72 h-96 bg-[#FAF9F6] border border-neutral-300 rounded-lg p-6 flex flex-col justify-between cursor-pointer snap-center hover:scale-[1.02] transition-transform shadow-lg relative overflow-hidden"
+            v-card-tilt
           >
             <div class="absolute left-0 top-0 bottom-0 w-1.5" :style="{ backgroundColor: product.category === 'natural' ? '#2F4F2F' : (product.category === 'tech' ? '#233CB5' : '#666') }"></div>
             <div>
@@ -99,7 +100,7 @@ onMounted(() => {
 
     <!-- Ventures -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 px-6 py-24 max-w-7xl mx-auto">
-      <router-link to="/studio" class="venture-card opacity-0 group relative overflow-hidden bg-background border border-neutral-200 p-10 md:p-14 hover:border-tech transition-colors duration-500 min-h-[380px] flex flex-col justify-between">
+      <router-link to="/studio" class="venture-card opacity-0 group relative overflow-hidden bg-background border border-neutral-200 p-10 md:p-14 hover:border-tech transition-colors duration-500 min-h-[380px] flex flex-col justify-between" v-card-tilt>
         <div class="absolute inset-0 bg-tech/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
         <div class="relative z-10">
           <div class="text-xs font-mono uppercase tracking-widest text-tech mb-4">01 — Services</div>
@@ -111,7 +112,7 @@ onMounted(() => {
         </div>
       </router-link>
 
-      <router-link to="/triu" class="venture-card opacity-0 group relative overflow-hidden bg-background border border-neutral-200 p-10 md:p-14 hover:border-naturals transition-colors duration-500 min-h-[380px] flex flex-col justify-between">
+      <router-link to="/triu" class="venture-card opacity-0 group relative overflow-hidden bg-background border border-neutral-200 p-10 md:p-14 hover:border-naturals transition-colors duration-500 min-h-[380px] flex flex-col justify-between" v-card-tilt>
         <div class="absolute inset-0 bg-naturals/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
         <div class="relative z-10">
           <div class="text-xs font-mono uppercase tracking-widest text-naturals mb-4">02 — Products</div>
@@ -123,7 +124,7 @@ onMounted(() => {
         </div>
       </router-link>
 
-      <router-link to="/studio" class="venture-card opacity-0 group relative overflow-hidden bg-background border border-neutral-200 p-10 md:p-14 hover:border-marketing transition-colors duration-500 min-h-[380px] flex flex-col justify-between">
+      <router-link to="/studio" class="venture-card opacity-0 group relative overflow-hidden bg-background border border-neutral-200 p-10 md:p-14 hover:border-marketing transition-colors duration-500 min-h-[380px] flex flex-col justify-between" v-card-tilt>
         <div class="absolute inset-0 bg-marketing/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
         <div class="relative z-10">
           <div class="text-xs font-mono uppercase tracking-widest text-marketing mb-4">03 — Marketing</div>
@@ -139,7 +140,7 @@ onMounted(() => {
     <!-- CTA Band -->
     <section class="bg-neutral-900 text-white py-20 px-6 text-center">
       <h3 class="font-serif text-4xl md:text-6xl mb-6">A problem-first product lab.</h3>
-      <router-link to="/contact" class="inline-flex items-center gap-2 text-sm uppercase tracking-widest font-medium hover:text-neutral-300 transition-colors">
+      <router-link to="/contact" class="inline-flex items-center gap-2 text-sm uppercase tracking-widest font-medium hover:text-neutral-300 transition-colors" v-ripple>
         Work with us <ArrowRight class="w-4 h-4" />
       </router-link>
     </section>

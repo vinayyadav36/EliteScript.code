@@ -106,6 +106,7 @@ onMounted(() => {
         :key="product.$id"
         @click="store.openProductPanel(product)"
         class="triu-element group border border-foreground/10 p-8 md:p-12 hover:border-naturals transition-colors duration-500 bg-background cursor-pointer relative"
+        v-card-tilt
       >
         <div class="flex justify-between items-start mb-12">
           <div class="text-xs font-mono uppercase tracking-widest text-naturals">{{ product.category }}</div>

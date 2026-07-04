@@ -3,15 +3,13 @@ import OrderForm from '@/components/ui/OrderForm.vue'
 import { onMounted, ref, nextTick } from 'vue'
 import anime from 'animejs'
 import { MessageCircle, Mail, Instagram, Linkedin, ExternalLink } from 'lucide-vue-next'
+import { useContactInfo } from '@/composables/useContactInfo'
 
 const titleRef = ref()
 const textRef = ref()
 const formContainerRef = ref()
 
-const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '917355534385'
-const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'hello@saltedhash.in'
-const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL || 'https://instagram.com/saltedhash'
-const linkedinUrl = import.meta.env.VITE_LINKEDIN_URL || 'https://linkedin.com/company/saltedhash'
+const { whatsappNumber, contactEmail, instagramUrl, linkedinUrl } = useContactInfo()
 
 const platforms = [
   {
@@ -31,7 +29,7 @@ const platforms = [
   {
     icon: Instagram,
     label: 'Instagram',
-    sub: '@saltedhash',
+    sub: instagramUrl.replace('https://', ''),
     color: '#E1306C',
     url: instagramUrl
   },

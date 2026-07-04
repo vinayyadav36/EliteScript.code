@@ -162,6 +162,7 @@ onMounted(() => {
         :key="service.id"
         class="studio-element opacity-0 border-b border-neutral-200 cursor-pointer group"
         @click="toggleService(service.id)"
+        v-card-tilt
       >
         <div class="py-8 flex justify-between items-center gap-6">
           <div class="flex items-center gap-6">
@@ -181,7 +182,7 @@ onMounted(() => {
         </div>
 
         <Transition name="accordion">
-          <div v-show="activeService === service.id" class="pb-10 pl-14">
+          <div v-if="activeService === service.id" class="pb-10 pl-14">
             <p class="text-neutral-600 max-w-2xl text-lg leading-relaxed mb-8">{{ service.desc }}</p>
 
             <div class="flex flex-wrap gap-3 mb-8">
