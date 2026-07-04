@@ -1,18 +1,11 @@
-import { Client, Databases, Storage } from 'appwrite'
-
-const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT
-const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID
-
-if (!endpoint || !projectId) {
-  console.warn('[SALTEDHASH] Appwrite env vars missing. Data features will be disabled.')
-}
+import { Client, Account, Databases, Storage } from 'appwrite'
 
 const client = new Client()
+    .setEndpoint("https://syd.cloud.appwrite.io/v1")
+    .setProject("69d77850001bef04a924")
 
-if (endpoint && projectId) {
-  client.setEndpoint(endpoint).setProject(projectId)
-}
+const account = new Account(client)
+const databases = new Databases(client)
+const storage = new Storage(client)
 
-export const databases = new Databases(client)
-export const storage = new Storage(client)
-export { client }
+export { client, account, databases, storage }
