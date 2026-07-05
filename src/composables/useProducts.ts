@@ -73,8 +73,12 @@ export function useProducts() {
     try {
       const response = await databases.listDocuments(databaseId, productsCollectionId, [])
       products.value = response.documents as unknown as Product[]
-    } catch (err: any) {
-      logger.error('Error fetching products:', err)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        logger.error('Error fetching products:', err)
+      } else {
+        logger.error('Error fetching products:', String(err))
+      }
       products.value = []
     } finally {
       loading.value = false
