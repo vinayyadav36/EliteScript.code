@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import anime from 'animejs'
 import { Plus, Minus, Code2, Brain, TrendingUp, Smartphone, Shield, Zap, Check, Clock, ExternalLink } from 'lucide-vue-next'
+import { useServices } from '@/composables/useServices'
 
-const services = [
+const { services: appwriteServices, loading, fetchServices } = useServices()
+
+const fallbackServices = [
   {
     id: 1,
     icon: Brain,
@@ -124,6 +127,29 @@ const toggleService = (id: number) => {
   activeService.value = activeService.value === id ? null : id
 }
 
+const displayServices = computed(() => {
+  if (appwriteServices.value.length > 0) {
+    // Map Appwrite data to fallback UI structure
+    return appwriteServices.value.map((s, index) => {
+      // Find a matching fallback service to inherit icon and extra UI details
+      const fallbackMatch = fallbackServices.find(fs => fs.title === s.title) || fallbackServices[index] || fallbackServices[0];
+      return {
+        id: index + 1,
+        icon: fallbackMatch.icon,
+        title: s.title,
+        tag: `0${index + 1}`,
+        desc: s.description,
+        deliverables: fallbackMatch.deliverables,
+        techStack: s.tags || fallbackMatch.techStack,
+        benefits: s.benefits || fallbackMatch.benefits,
+        engagementInfo: fallbackMatch.engagementInfo,
+        projects: fallbackMatch.projects
+      }
+    })
+  }
+  return fallbackServices
+})
+
 const handleServiceQuery = () => {
   const serviceQuery = route.query.service
   if (serviceQuery) {
@@ -140,7 +166,10 @@ const handleServiceQuery = () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchServices()
+  await nextTick()
+
   anime({
     targets: '.studio-element',
     translateY: [30, 0],
@@ -180,8 +209,17 @@ watch(() => route.query.service, () => {
     </div>
 
     <div class="border-t border-neutral-200">
+      <div v-if="loading" class="py-12 flex justify-center">
+        <div class="animate-pulse flex gap-2">
+           <div class="w-3 h-3 bg-neutral-300 rounded-full"></div>
+           <div class="w-3 h-3 bg-neutral-300 rounded-full"></div>
+           <div class="w-3 h-3 bg-neutral-300 rounded-full"></div>
+        </div>
+      </div>
+
       <div
-        v-for="service in services"
+        v-else
+        v-for="service in displayServices"
         :key="service.id"
         :id="`service-${service.id}`"
         class="studio-element opacity-0 border-b border-neutral-200 cursor-pointer group scroll-mt-24 hover:bg-neutral-50/50 transition-colors duration-300"

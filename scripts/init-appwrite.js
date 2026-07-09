@@ -19,9 +19,10 @@ const PROJECT_ID = env.VITE_APPWRITE_PROJECT_ID;
 const DATABASE_ID = env.VITE_APPWRITE_DATABASE_ID;
 const PRODUCTS_COLLECTION_ID = env.VITE_APPWRITE_PRODUCTS_COLLECTION_ID;
 const SERVICES_COLLECTION_ID = env.VITE_APPWRITE_SERVICES_COLLECTION_ID;
+const LEADS_COLLECTION_ID = env.VITE_APPWRITE_LEADS_COLLECTION_ID;
 const API_KEY = env.APPWRITE_API_KEY || process.env.APPWRITE_API_KEY;
 
-if (!ENDPOINT || !PROJECT_ID || !DATABASE_ID || !PRODUCTS_COLLECTION_ID || !SERVICES_COLLECTION_ID) {
+if (!ENDPOINT || !PROJECT_ID || !DATABASE_ID || !PRODUCTS_COLLECTION_ID || !SERVICES_COLLECTION_ID || !LEADS_COLLECTION_ID) {
   console.error("Missing required environment variables in .env");
   process.exit(1);
 }
@@ -103,6 +104,7 @@ async function init() {
 
   await createCollectionIfNotExists(PRODUCTS_COLLECTION_ID, "Products");
   await createCollectionIfNotExists(SERVICES_COLLECTION_ID, "Services");
+  await createCollectionIfNotExists(LEADS_COLLECTION_ID, "Contact Leads");
 
   console.log("\nBuilding Products attributes...");
   await createAttr(PRODUCTS_COLLECTION_ID, "name", () =>
@@ -211,6 +213,26 @@ async function init() {
       "Automated failover logging error notifications.",
     ],
   });
+
+  console.log("\nBuilding Contact Leads attributes...");
+  await createAttr(LEADS_COLLECTION_ID, "name", () =>
+    databases.createStringAttribute(DATABASE_ID, LEADS_COLLECTION_ID, "name", 255, true)
+  );
+  await createAttr(LEADS_COLLECTION_ID, "email", () =>
+    databases.createStringAttribute(DATABASE_ID, LEADS_COLLECTION_ID, "email", 255, false)
+  );
+  await createAttr(LEADS_COLLECTION_ID, "phone", () =>
+    databases.createStringAttribute(DATABASE_ID, LEADS_COLLECTION_ID, "phone", 50, true)
+  );
+  await createAttr(LEADS_COLLECTION_ID, "message", () =>
+    databases.createStringAttribute(DATABASE_ID, LEADS_COLLECTION_ID, "message", 2048, false)
+  );
+  await createAttr(LEADS_COLLECTION_ID, "productInterest", () =>
+    databases.createStringAttribute(DATABASE_ID, LEADS_COLLECTION_ID, "productInterest", 255, false)
+  );
+  await createAttr(LEADS_COLLECTION_ID, "source", () =>
+    databases.createStringAttribute(DATABASE_ID, LEADS_COLLECTION_ID, "source", 100, true, "website")
+  );
 
   console.log("\n=== Initialization Complete ===\n");
 }

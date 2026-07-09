@@ -22,12 +22,11 @@ npm run preview
 ## Deploy
 Connect repo to Vercel. Set environment variables from .env in Vercel dashboard. Deploy.
 
-## Appwrite Setup
-1. Create project at cloud.appwrite.io
-2. Run: npx appwrite deploy collection (requires appwrite CLI)
-3. Or manually create collections from appwrite.json schema
-4. Set collection permissions: products → read("any"), contact_leads → create("any")
-5. Create storage bucket product_assets → read("any")
+## Documentation
+- [Architecture](docs/ARCHITECTURE.md)
+- [Appwrite Setup](docs/APPWRITE_SETUP.md)
+- [Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)
+- [Local Mode & Fallbacks](docs/LOCAL_MODE.md)
 
 ## Routes
 / — Home
