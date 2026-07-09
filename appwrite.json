@@ -35,10 +35,26 @@
           "documentSecurity": false,
           "attributes": [
             { "key": "name", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 255, "default": null },
-            { "key": "email", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 255, "default": null },
-            { "key": "phone", "type": "string", "status": "available", "error": "", "required": false, "array": false, "size": 50, "default": null },
-            { "key": "message", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 2048, "default": null },
+            { "key": "email", "type": "string", "status": "available", "error": "", "required": false, "array": false, "size": 255, "default": null },
+            { "key": "phone", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 50, "default": null },
+            { "key": "message", "type": "string", "status": "available", "error": "", "required": false, "array": false, "size": 2048, "default": null },
+            { "key": "productInterest", "type": "string", "status": "available", "error": "", "required": false, "array": false, "size": 255, "default": null },
             { "key": "source", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 100, "default": "website" }
+          ],
+          "indexes": []
+        },
+        {
+          "$id": "services",
+          "name": "Services",
+          "$permissions": [
+            "read(\"any\")"
+          ],
+          "documentSecurity": false,
+          "attributes": [
+            { "key": "title", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 255, "default": null },
+            { "key": "description", "type": "string", "status": "available", "error": "", "required": true, "array": false, "size": 2048, "default": null },
+            { "key": "tags", "type": "string", "status": "available", "error": "", "required": false, "array": true, "size": 255, "default": null },
+            { "key": "benefits", "type": "string", "status": "available", "error": "", "required": false, "array": true, "size": 1000, "default": null }
           ],
           "indexes": []
         }
