@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom Clean Minimalism palette for SALTEDHASH */
+  --color-studio-dark: #1a1a1a;        /* Soft premium charcoal text and dark backgrounds */
+  --color-studio-charcoal: #262626;    /* Soft charcoal for secondary dark containers */
+  --color-studio-card: #2e2e2e;        /* Dark border/card accent within dark sections */
+  --color-studio-accent: #1a1a1a;      /* Stark charcoal accent for active interactions */
+  --color-studio-bronze: #5a5955;      /* Replaces flashy gold/bronze with refined warm stone/taupe */
+  --color-studio-light: #f9f8f6;       /* Clean plaster-white / warm linen background */
+  --color-studio-cream: #f3f2ee;       /* Soft warm grey for secondary backgrounds */
+  --color-studio-ash: #e6e4de;         /* Extremely clean, fine border-line color */
+  --color-studio-muted: #76746f;       /* Sophisticated muted stone-grey text */
+  --color-studio-silver: #b0aeaa;      /* Subtle secondary lines and details */
+}
+
+/* Base rules to support custom typography */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-studio-light);
+  color: var(--color-studio-dark);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-studio-light);
+}
+::-webkit-scrollbar-thumb {
+  background: #cacac5;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-studio-muted);
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-studio-dark);
+}
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: #333;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
