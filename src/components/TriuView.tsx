@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, HelpCircle, Leaf, ShieldCheck, ShoppingBag, Droplets, Calendar, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import QuickViewModal, { QuickViewData } from './QuickViewModal';
 
 interface TriuViewProps {
   setActiveTab: (tab: string) => void;
@@ -27,6 +28,7 @@ interface Product {
 export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart, onCartOpen }: TriuViewProps) {
   const [selectedProduct, setSelectedProduct] = useState<string | null>('triu-k');
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
+  const [quickViewItem, setQuickViewItem] = useState<QuickViewData | null>(null);
   
   const TRIU_PRODUCTS: Product[] = [
     {
@@ -277,20 +279,18 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
               <div className="flex gap-2.5">
                 <button
                   onClick={() => {
-                    onAddToCart({
+                    setQuickViewItem({
                       id: activeProduct.id,
                       name: activeProduct.name,
+                      category: 'TRIU Naturals',
                       price: activeProduct.price,
-                      type: 'product',
-                      itemId: activeProduct.id,
-                      qty: 1
+                      description: activeProduct.description,
+                      type: 'product'
                     });
-                    setSuccessNotice(activeProduct.name);
-                    setTimeout(() => setSuccessNotice(null), 4000);
                   }}
                   className="px-5 py-3 bg-[#4f5c4b] hover:bg-[#343e31] text-studio-light text-xs font-mono uppercase tracking-widest transition-colors duration-300 flex items-center gap-1.5 cursor-pointer"
                 >
-                  Add to Basket
+                  Quick View & Buy
                   <ShoppingBag className="h-4 w-4" />
                 </button>
                 <button
@@ -334,6 +334,13 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
           ))}
         </div>
       </section>
+
+      <QuickViewModal
+        item={quickViewItem}
+        onClose={() => setQuickViewItem(null)}
+        onAddToCart={onAddToCart}
+        onCartOpen={onCartOpen}
+      />
     </div>
   );
 }

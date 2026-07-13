@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { SERVICES, PROCESS_STEPS } from '../data';
 import { Service } from '../types';
 import ScrollReveal from './ScrollReveal';
+import QuickViewModal, { QuickViewData } from './QuickViewModal';
 
 interface StudioViewProps {
   setActiveTab: (tab: string) => void;
@@ -137,6 +138,7 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
   const [selectedPackages, setSelectedPackages] = useState<Record<string, number>>({});
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
 
+  const [quickViewItem, setQuickViewItem] = useState<QuickViewData | null>(null);
 
   const categories = ['All', 'Intelligence', 'Engineering', 'Execution', 'Aesthetics', 'Efficiency', 'Security'];
 
@@ -396,21 +398,19 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          onAddToCart({
-                                            id: `${srv.id}-${activePack.tierName}`,
-                                            name: `${srv.title}`,
+                                          setQuickViewItem({
+                                            id: srv.id,
+                                            name: srv.title,
+                                            category: srv.category,
                                             price: activePack.price,
+                                            description: activePack.description,
                                             type: 'service',
-                                            itemId: srv.id,
-                                            qty: 1,
                                             tierName: activePack.tierName
                                           });
-                                          setSuccessNotice(`${srv.id}-${activePack.tierName}`);
-                                          setTimeout(() => setSuccessNotice(null), 4000);
                                         }}
                                         className="flex-1 py-3.5 bg-studio-dark hover:bg-studio-bronze text-studio-light text-xs font-mono uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
                                       >
-                                        Book Scope / Add to Basket
+                                        Quick View & Book
                                         <ShoppingBag className="h-4 w-4" />
                                       </button>
                                       <button
@@ -578,6 +578,13 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
           </button>
         </ScrollReveal>
       </section>
+
+      <QuickViewModal
+        item={quickViewItem}
+        onClose={() => setQuickViewItem(null)}
+        onAddToCart={onAddToCart}
+        onCartOpen={onCartOpen}
+      />
     </div>
   );
 }

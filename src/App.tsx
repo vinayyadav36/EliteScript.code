@@ -13,6 +13,7 @@ import TriuView from './components/TriuView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
 import CartDrawer from './components/CartDrawer';
+import OrderConfirmationModal from './components/OrderConfirmationModal';
 import { Venture, CartItem, Order } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -23,6 +24,7 @@ export default function App() {
   // E-Commerce global state
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
   // Prefill contact form states
   const [prefilledInterest, setPrefilledInterest] = useState<string | null>(null);
@@ -68,6 +70,8 @@ export default function App() {
 
   const handlePlaceOrder = (order: Order) => {
     console.log('Secure Tide order created:', order);
+    setIsCartOpen(false); // Close cart drawer
+    setConfirmedOrder(order); // Trigger confirmation modal
   };
 
   const cartCount = cart.reduce((acc, curr) => acc + curr.qty, 0);
@@ -153,6 +157,14 @@ export default function App() {
         onClearCart={handleClearCart}
         onPlaceOrder={handlePlaceOrder}
       />
+
+      {/* Simulated Email Receipt Modal */}
+      {confirmedOrder && (
+        <OrderConfirmationModal
+          order={confirmedOrder}
+          onClose={() => setConfirmedOrder(null)}
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, ShoppingBag, Trash2, Plus, Minus, QrCode, CreditCard, ExternalLink, Check, Copy, History, ClipboardCheck } from 'lucide-react';
+import { X, ShoppingBag, Trash2, Plus, Minus, QrCode, CreditCard, ExternalLink, Check, Copy, History, ClipboardCheck, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CartItem, Order } from '../types';
+import EmptyCartState from './EmptyCartState';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -107,6 +108,33 @@ export default function CartDrawer({
   };
 
   const totalInr = calculateTotalInr();
+
+  const handleDownloadReceipt = (order: Order) => {
+    const receiptText = `
+SALTEDHASH STUDIOS
+Order Receipt: ${order.id}
+Date: ${order.date}
+Customer: ${order.customerName} (${order.customerEmail})
+Status: ${order.status}
+--------------------------------------------------
+ITEMS:
+${order.items.map(item => `- ${item.qty}x ${item.name} ${item.tierName ? `(${item.tierName})` : ''} = ₹${item.price * item.qty}`).join('\n')}
+--------------------------------------------------
+TOTAL: ₹${order.total}
+
+Thank you for your business.
+`.trim();
+
+    const blob = new Blob([receiptText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Receipt_${order.id}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(tidePayLink);
@@ -359,39 +387,7 @@ export default function CartDrawer({
                   {activeTab === 'cart' ? (
                     <>
                       {cart.length === 0 ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="text-center py-20 px-4 space-y-6 border border-dashed border-studio-ash/80 bg-studio-light/40"
-                        >
-                          <div className="relative mx-auto h-16 w-16 flex items-center justify-center bg-studio-cream border border-studio-ash/60 rounded-full">
-                            <ShoppingBag className="h-6 w-6 text-studio-muted" />
-                            <motion.span 
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ repeat: Infinity, duration: 3 }}
-                              className="absolute -top-1 -right-1 flex h-3.5 w-3.5 rounded-full bg-studio-bronze/40"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <h4 className="font-serif text-base font-semibold text-studio-dark">
-                              Your Order Basket is Empty
-                            </h4>
-                            <p className="font-sans text-xs text-studio-muted max-w-xs mx-auto leading-relaxed">
-                              Configure bespoke software solutions in <strong className="text-studio-dark font-medium">The Studio</strong>, or discover premium botanical formulas in <strong className="text-studio-dark font-medium">TRIU Botanical</strong>.
-                            </p>
-                          </div>
-
-                          <div className="pt-2">
-                            <button
-                              onClick={onClose}
-                              className="inline-flex items-center gap-2 px-6 py-3.5 bg-studio-dark text-studio-light text-xs font-mono uppercase tracking-widest hover:bg-studio-bronze transition-all duration-300 shadow-xs cursor-pointer"
-                            >
-                              Continue Exploring
-                              <ExternalLink className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </motion.div>
+                        <EmptyCartState onClose={onClose} />
                       ) : (
                         <div className="space-y-6">
                           {/* Currency Selection */}
@@ -670,6 +666,16 @@ export default function CartDrawer({
                                     </a>
                                   </div>
                                 )}
+
+                                <div className={`pt-2 ${ord.status !== 'Awaiting Tide Payment' ? '' : 'border-t border-studio-ash/10 mt-2'} flex`}>
+                                  <button
+                                    onClick={() => handleDownloadReceipt(ord)}
+                                    className="w-full py-2 border border-studio-ash/60 bg-studio-cream hover:bg-studio-dark hover:text-studio-light hover:border-studio-dark text-[10px] font-mono uppercase tracking-wider text-center transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download Receipt
+                                  </button>
+                                </div>
                               </div>
                             ))}
                           </div>
