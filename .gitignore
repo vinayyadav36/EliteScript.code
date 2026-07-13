@@ -1,36 +1,8 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Runtime
-node_modules
-dist
-dist-ssr
-*.local
-
-# Environment - NEVER COMMIT THESE
-.env
-.env.*
-!.env.example
-
-# Build info
-*.tsbuildinfo
-.next/
-out/
-
-# OS
+node_modules/
+build/
+dist/
+coverage/
 .DS_Store
-
-# Editor
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.log
+.env*
+!.env.example

@@ -1,28 +1,13 @@
 {
+  "version": 2,
   "rewrites": [
-    { "source": "/((?!icons|favicon\\.svg|sw\\.js|workbox|manifest\\.webmanifest).*)", "destination": "/index.html" }
-  ],
-  "headers": [
     {
-      "source": "/sw.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Service-Worker-Allowed", "value": "/" }
-      ]
-    },
-    {
-      "source": "/manifest.webmanifest",
-      "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json" }
-      ]
+      "source": "/api/:path*",
+      "destination": "/api/index.ts"
     },
     {
       "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
+      "destination": "/$1"
     }
   ]
 }
