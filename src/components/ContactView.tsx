@@ -425,7 +425,7 @@ export default function ContactView({ prefilledInterest, prefilledType, clearPre
               </div>
               <div className="flex items-center gap-2">
                 <Building className="h-3.5 w-3.5 text-studio-bronze" />
-                <span>Bengaluru, KA, IN</span>
+                <span>Rewari, HR, IN</span>
               </div>
             </div>
           </div>

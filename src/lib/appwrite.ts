@@ -1,14 +1,13 @@
 /**
  * Appwrite SDK Client
  *
- * Lazy-initialized client for the Appwrite backend.
- * Falls back gracefully when environment variables are missing.
+ * Configured client for the Appwrite backend.
  */
 
-import { Client, Databases, Storage, Query } from 'appwrite';
+import { Client, Account, Databases, Storage, Query } from 'appwrite';
 
-const ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT as string | undefined;
-const PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID as string | undefined;
+const ENDPOINT = "https://syd.cloud.appwrite.io/v1";
+const PROJECT_ID = "69d77850001bef04a924";
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID as string | undefined;
 
 const PRODUCTS_COLLECTION = import.meta.env.VITE_APPWRITE_PRODUCTS_COLLECTION_ID as string | undefined;
@@ -16,53 +15,27 @@ const SERVICES_COLLECTION = import.meta.env.VITE_APPWRITE_SERVICES_COLLECTION_ID
 const LEADS_COLLECTION = import.meta.env.VITE_APPWRITE_LEADS_COLLECTION_ID as string | undefined;
 const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID as string | undefined;
 
-let _client: Client | null = null;
-let _databases: Databases | null = null;
-let _storage: Storage | null = null;
+const client = new Client()
+    .setEndpoint(ENDPOINT)
+    .setProject(PROJECT_ID);
 
-function getClient(): Client | null {
-  if (!ENDPOINT || !PROJECT_ID) {
-    console.warn('[Appwrite] Missing VITE_APPWRITE_ENDPOINT or VITE_APPWRITE_PROJECT_ID — running in offline/fallback mode.');
-    return null;
-  }
+const account = new Account(client);
+const databases = new Databases(client);
+const storage = new Storage(client);
 
-  if (!_client) {
-    _client = new Client();
-    _client.setEndpoint(ENDPOINT).setProject(PROJECT_ID);
-  }
-
-  return _client;
-}
-
-export function getDatabases(): Databases | null {
-  if (_databases) return _databases;
-  const client = getClient();
-  if (!client) return null;
-  _databases = new Databases(client);
-  return _databases;
-}
-
-export function getStorage(): Storage | null {
-  if (_storage) return _storage;
-  const client = getClient();
-  if (!client) return null;
-  _storage = new Storage(client);
-  return _storage;
-}
+export { client, account, databases };
 
 export function isAppwriteConfigured(): boolean {
-  return !!ENDPOINT && !!PROJECT_ID && !!DATABASE_ID;
+  return !!DATABASE_ID;
 }
 
 // --- Database Helpers ---
 
 export async function fetchActiveProducts() {
-  const db = getDatabases();
-  if (!db || !DATABASE_ID || !PRODUCTS_COLLECTION) return null;
+  if (!DATABASE_ID || !PRODUCTS_COLLECTION) return null;
 
   try {
-    const response = await db.listDocuments(DATABASE_ID, PRODUCTS_COLLECTION, [
-      Query.equal('status', 'active'),
+    const response = await databases.listDocuments(DATABASE_ID, PRODUCTS_COLLECTION, [
       Query.orderDesc('$createdAt'),
     ]);
     return response.documents;
@@ -73,11 +46,10 @@ export async function fetchActiveProducts() {
 }
 
 export async function fetchServices() {
-  const db = getDatabases();
-  if (!db || !DATABASE_ID || !SERVICES_COLLECTION) return null;
+  if (!DATABASE_ID || !SERVICES_COLLECTION) return null;
 
   try {
-    const response = await db.listDocuments(DATABASE_ID, SERVICES_COLLECTION);
+    const response = await databases.listDocuments(DATABASE_ID, SERVICES_COLLECTION);
     return response.documents;
   } catch (err) {
     console.error('[Appwrite] Failed to fetch services:', err);
@@ -93,14 +65,13 @@ export async function submitContactLead(lead: {
   productInterest?: string;
   source?: string;
 }) {
-  const db = getDatabases();
-  if (!db || !DATABASE_ID || !LEADS_COLLECTION) {
-    console.warn('[Appwrite] Cannot submit lead — backend not configured.');
+  if (!DATABASE_ID || !LEADS_COLLECTION) {
+    console.warn('[Appwrite] Cannot submit lead — database ID or collection not configured.');
     return null;
   }
 
   try {
-    const doc = await db.createDocument(
+    const doc = await databases.createDocument(
       DATABASE_ID,
       LEADS_COLLECTION,
       'unique()',
@@ -119,8 +90,7 @@ export async function submitContactLead(lead: {
 // --- Storage Helpers ---
 
 export function getProductImageUrl(fileId: string): string | null {
-  const storage = getStorage();
-  if (!storage || !BUCKET_ID) return null;
+  if (!BUCKET_ID) return null;
 
   try {
     return storage.getFileView(BUCKET_ID, fileId);

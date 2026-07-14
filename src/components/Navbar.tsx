@@ -145,7 +145,7 @@ export default function Navbar({ activeTab, setActiveTab, onContactPrefill, cart
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden bg-studio-cream pt-24 pb-8 px-6 md:px-12 flex flex-col justify-between"
+            className="fixed inset-0 z-[60] lg:hidden bg-studio-cream pt-24 pb-8 px-6 md:px-12 flex flex-col justify-between"
           >
             <div className="flex flex-col gap-6 mt-8">
               {navItems.map((item, index) => {
