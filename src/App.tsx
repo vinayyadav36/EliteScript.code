@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -16,10 +16,26 @@ import CartDrawer from './components/CartDrawer';
 import OrderConfirmationModal from './components/OrderConfirmationModal';
 import { Venture, CartItem, Order } from './types';
 import { motion, AnimatePresence } from 'motion/react';
+import { client } from './lib/appwrite';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedVenture, setSelectedVenture] = useState<Venture | null>(null);
+
+  // Ping Appwrite backend on load to verify the setup
+  useEffect(() => {
+    try {
+      (client as any).ping()
+        .then((response: any) => {
+          console.log('[Appwrite] Connection verified, ping successful:', response);
+        })
+        .catch((error: any) => {
+          console.warn('[Appwrite] Ping failed, server unreachable or misconfigured:', error);
+        });
+    } catch (e) {
+      console.warn('[Appwrite] SDK client does not support direct ping method:', e);
+    }
+  }, []);
 
   // E-Commerce global state
   const [cart, setCart] = useState<CartItem[]>([]);
