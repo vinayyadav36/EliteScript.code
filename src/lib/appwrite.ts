@@ -36,7 +36,6 @@ export async function fetchActiveProducts() {
 
   try {
     const response = await databases.listDocuments(DATABASE_ID, PRODUCTS_COLLECTION, [
-      Query.equal('status', 'active'),
       Query.orderDesc('$createdAt'),
     ]);
     return response.documents;
