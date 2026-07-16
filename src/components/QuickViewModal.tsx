@@ -198,6 +198,28 @@ export default function QuickViewModal({ item, onClose, onAddToCart, onCartOpen 
                       </a>
                     )}
 
+                    {/* Tide */}
+                    {productLinks.tideUrl && (
+                      <a
+                        href={productLinks.tideUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-1 text-[10px] text-studio-muted hover:text-[#4f5c4b] transition-colors duration-200"
+                      >
+                        <div className="text-studio-muted/40 group-hover:text-[#4f5c4b] transition-colors duration-200">
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-mono uppercase tracking-wider">
+                            {productLinks.tideIsFallback ? 'View on Tide Store' : 'Buy on Tide'}
+                          </span>
+                          {productLinks.tideIsFallback && (
+                            <span className="text-[8px] text-studio-muted/70 leading-none">General store — search for this product</span>
+                          )}
+                        </div>
+                      </a>
+                    )}
+
                     {/* WhatsApp */}
                     <a
                       href={productLinks.whatsapp}
@@ -233,7 +255,9 @@ export default function QuickViewModal({ item, onClose, onAddToCart, onCartOpen 
                       type: item.type,
                       itemId: item.id,
                       qty: 1,
-                      tierName: item.tierName
+                      tierName: item.tierName,
+                      variantCode: variantCode,
+                      variantName: selectedVariantName || undefined
                     });
                     onClose();
                     onCartOpen();
@@ -266,6 +290,19 @@ export default function QuickViewModal({ item, onClose, onAddToCart, onCartOpen 
                     className="py-3.5 px-4 border border-studio-dark/40 text-studio-dark hover:bg-studio-dark/5 text-xs font-mono uppercase tracking-widest transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     Meesho
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </a>
+                )}
+
+                {/* Tide (Products only) */}
+                {item.type === 'product' && productLinks?.tideUrl && (
+                  <a
+                    href={productLinks.tideUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-3.5 px-4 border border-studio-dark/40 text-studio-dark hover:bg-studio-dark/5 text-xs font-mono uppercase tracking-widest transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    {productLinks.tideIsFallback ? 'View on Tide Store' : 'Buy on Tide'}
                     <ArrowUpRight className="h-3.5 w-3.5" />
                   </a>
                 )}

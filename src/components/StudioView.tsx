@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUpRight, ChevronDown, ChevronUp, Cpu, Layers, Rocket, ShieldCheck, Terminal, ShoppingBag, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { businessConfig } from '../config/businessConfig';
@@ -163,6 +163,7 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
   const [carouselPaused, setCarouselPaused] = useState(false);
   const [carouselUserInteracted, setCarouselUserInteracted] = useState(false);
   const [carouselVisible, setCarouselVisible] = useState(true);
+  const carouselSectionRef = useRef<HTMLDivElement>(null);
 
   const categories = ['All', 'Intelligence', 'Engineering', 'Execution', 'Aesthetics', 'Efficiency', 'Security', 'Marketing & Business Consultancy'];
 
@@ -248,6 +249,21 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
     }
   }, []);
 
+  useEffect(() => {
+    const node = carouselSectionRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!carouselUserInteracted) {
+          setCarouselVisible(entry.isIntersecting);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [carouselUserInteracted]);
+
   const handleCarouselNav = (direction: 'prev' | 'next') => {
     setCarouselUserInteracted(true);
     setCarouselPaused(true);
@@ -300,6 +316,7 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
       {/* Featured Services Carousel */}
       {services.length > 0 && (
         <section
+          ref={carouselSectionRef}
           className="py-20 bg-studio-cream border-b border-studio-ash/30"
           onMouseEnter={() => !carouselUserInteracted && setCarouselPaused(true)}
           onMouseLeave={() => !carouselUserInteracted && setCarouselPaused(false)}
