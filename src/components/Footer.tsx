@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Check, Send, ShieldAlert, Cpu } from 'lucide-react';
+import { businessConfig } from '../config/businessConfig';
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
@@ -36,7 +37,9 @@ export default function Footer({ setActiveTab }: FooterProps) {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="font-serif text-2xl font-bold tracking-wider text-studio-light">
-                  SALTED<span className="text-studio-silver font-light font-sans">HASH</span>
+                  {businessConfig.name === 'SALTEDHASH' ? (
+                    <>SALTED<span className="text-studio-silver font-light font-sans">HASH</span></>
+                  ) : businessConfig.name}
                 </span>
                 <div className="h-1.5 w-1.5 rounded-full bg-studio-silver" />
               </div>
@@ -149,15 +152,14 @@ export default function Footer({ setActiveTab }: FooterProps) {
               COORDINATES
             </span>
             <p className="text-xs text-studio-silver font-light leading-relaxed mb-4">
-              SALTEDHASH HQ<br />
-              Bengaluru, KA<br />
-              India
+              {businessConfig.name} HQ<br />
+              {businessConfig.address}
             </p>
             <p className="text-xs text-studio-silver font-mono hover:text-studio-light transition-colors duration-200">
-              <a href="mailto:studio@saltedhash.org">studio@saltedhash.org</a>
+              <a href={`mailto:${businessConfig.email}`}>{businessConfig.email}</a>
             </p>
             <p className="text-xs text-studio-muted font-mono mt-1">
-              +91 (080) 4920-HASH
+              {businessConfig.phone}
             </p>
           </div>
 
@@ -166,7 +168,7 @@ export default function Footer({ setActiveTab }: FooterProps) {
         {/* Bottom Line */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-[11px] text-studio-muted font-mono">
-            <span>&copy; {new Date().getFullYear()} SALTEDHASH. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} {businessConfig.name}. All rights reserved.</span>
             <span className="hidden md:inline">|</span>
             <span className="flex items-center gap-1">
               <Cpu className="h-3 w-3 text-studio-silver" /> 2026 Epoch Engine

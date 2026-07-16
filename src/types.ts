@@ -57,7 +57,9 @@ export interface Order {
   customerEmail: string;
   items: CartItem[];
   total: number;
-  status: 'Awaiting Tide Payment' | 'Processing' | 'Delivering' | 'Completed';
+  status: 'Awaiting Payment' | 'Reference Submitted' | 'Processing' | 'Dispatch Ready' | 'Delivered' | 'Completed';
   paymentLink: string;
+  paymentChannel?: string;
+  paymentReference?: string;
 }
 

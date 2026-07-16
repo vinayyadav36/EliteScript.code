@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, ChevronDown, ChevronUp, Cpu, Network, Rocket, Layers, Code, ShieldCheck, Terminal, Lightbulb, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { businessConfig } from '../config/businessConfig';
 import { SERVICES, PROCESS_STEPS } from '../data';
 import { Service } from '../types';
 import ScrollReveal from './ScrollReveal';
@@ -58,7 +59,7 @@ const SERVICE_PACKAGES: Record<string, ServicePackage[]> = {
     {
       tierName: 'E-Commerce Marketplace',
       price: 650000,
-      description: 'Multi-vendor ready, highly responsive storefront integrated with automated Stripe / Tide invoice gateways.',
+      description: 'Multi-vendor ready, highly responsive storefront integrated with automated Stripe / Stripe invoice gateways.',
       deliverables: ['Secure product katalog systems', 'Automated tax and billing hooks', 'Real-time client order portals']
     }
   ],
@@ -222,7 +223,7 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
             No marketing <span className="italic font-normal text-studio-bronze">theatrics</span>.
           </h1>
           <p className="font-sans text-lg text-studio-muted font-light leading-relaxed max-w-2xl">
-            At SALTEDHASH, we operate as a tactical software partner. We design visual interfaces that communicate authority, write highly-optimized codebases that minimize server latency, and deploy robust architectures that scale natively.
+            At {businessConfig.name}, we operate as a tactical software partner. We design visual interfaces that communicate authority, write highly-optimized codebases that minimize server latency, and deploy robust architectures that scale natively.
           </p>
         </ScrollReveal>
       </section>
@@ -558,7 +559,7 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
             DELIVERY ENGINE
           </span>
           <h2 className="font-serif text-3xl md:text-4xl font-light tracking-tight">
-            How SALTEDHASH Operates
+            How {businessConfig.name} Operates
           </h2>
           <p className="font-sans text-sm text-studio-muted font-light leading-relaxed mt-2">
             We follow a rigid four-stage framework designed to maximize velocity and guarantee production-ready safety.

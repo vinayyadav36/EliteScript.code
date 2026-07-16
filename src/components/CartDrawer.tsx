@@ -3,6 +3,7 @@ import { X, ShoppingBag, Trash2, Plus, Minus, QrCode, CreditCard, ExternalLink, 
 import { motion, AnimatePresence } from 'motion/react';
 import { CartItem, Order } from '../types';
 import EmptyCartState from './EmptyCartState';
+import { businessConfig } from '../config/businessConfig';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ export default function CartDrawer({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
-  const [tidePayLink, setTidePayLink] = useState('https://web.tide.co/pay/saltedhash-group');
+  const [merchantPayLink, setMerchantPayLink] = useState('https://web.paymentgateway.com/pay/saltedhash');
   const [isCheckoutSubmitting, setIsCheckoutSubmitting] = useState(false);
 
   // Order placement micro-interaction success states
@@ -137,7 +138,7 @@ Thank you for your business.
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(tidePayLink);
+    navigator.clipboard.writeText(merchantPayLink);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
@@ -188,8 +189,8 @@ Thank you for your business.
         customerEmail: email,
         items: [...cart],
         total: totalInr,
-        status: 'Awaiting Tide Payment',
-        paymentLink: `${tidePayLink}?ref=${orderId}&amount=${(totalInr * currencyRates[currency]).toFixed(2)}&currency=${currency}`
+        status: 'Awaiting Payment',
+        paymentLink: `${merchantPayLink}?ref=${orderId}&amount=${(totalInr * currencyRates[currency]).toFixed(2)}&currency=${currency}`
       };
 
       // Real integration with our custom Express backend API
@@ -234,7 +235,7 @@ Thank you for your business.
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'Awaiting Tide Payment':
+      case 'Awaiting Payment':
         return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
       case 'Processing':
         return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
@@ -279,7 +280,7 @@ Thank you for your business.
                         Client Hub & Cart
                       </h2>
                       <p className="text-[10px] font-mono text-studio-muted uppercase tracking-wider">
-                        Secure Tide Business Portal
+                        Secure Business Portal
                       </p>
                     </div>
                   </div>
@@ -356,7 +357,7 @@ Thank you for your business.
                         </div>
 
                         <p className="font-sans text-xs text-studio-muted max-w-xs mx-auto leading-relaxed">
-                          Your purchase request has been synchronized with our live Express server. Click below to view your digital receipt and pay via Tide.
+                          Your purchase request has been synchronized with our live Express server. Click below to view your digital receipt and pay via Merchant Gateway.
                         </p>
 
                         <div className="flex flex-col gap-2 w-full max-w-xs pt-4">
@@ -505,39 +506,39 @@ Thank you for your business.
                                   setEmail(e.target.value);
                                   if (errors.email) setErrors(prev => ({ ...prev, email: undefined }));
                                 }}
-                                placeholder="e.g. customer@tide.co"
+                                placeholder="e.g. customer@saltedhash.org"
                                 className={`w-full bg-studio-light border px-3.5 py-2 text-xs font-sans outline-hidden transition-colors ${
                                   errors.email ? 'border-red-500 focus:border-red-600' : 'border-studio-ash/60 focus:border-studio-dark'
                                 }`}
                               />
                             </div>
 
-                            {/* Tide Business PayLink configuration */}
+                            {/* Merchant Business PayLink configuration */}
                             <div className="space-y-2 bg-studio-cream border border-studio-ash/40 p-4 rounded-none">
                               <div className="flex justify-between items-center">
                                 <span className="font-mono text-[9px] text-[#2c3327] font-bold uppercase flex items-center gap-1">
-                                  <CreditCard className="h-3.5 w-3.5 text-[#3c5a6c]" /> TIDE MERCHANT GATEWAY
+                                  <CreditCard className="h-3.5 w-3.5 text-[#3c5a6c]" /> SECURE MERCHANT GATEWAY
                                 </span>
                                 <span className="font-mono text-[8px] bg-studio-dark text-studio-light px-1.5 py-0.5">
                                   PWA Active
                                 </span>
                               </div>
                               <p className="text-[10px] text-studio-muted leading-relaxed font-light">
-                                Pay via secure <strong>Tide QuickLink</strong>. You can customise your business Tide link below so customers pay your account directly:
+                                Pay via secure <strong>Merchant QuickLink</strong>. You can customise your business payment link below so customers pay your account directly:
                               </p>
                               <div className="flex gap-1.5">
                                 <input
                                   type="text"
-                                  value={tidePayLink}
-                                  onChange={(e) => setTidePayLink(e.target.value)}
-                                  placeholder="e.g. https://web.tide.co/pay-by-link/..."
+                                  value={merchantPayLink}
+                                  onChange={(e) => setMerchantPayLink(e.target.value)}
+                                  placeholder="e.g. https://payment.gateway.com/pay/..."
                                   className="flex-1 bg-studio-light border border-studio-ash/60 px-2 py-1 text-[10px] font-mono outline-hidden focus:border-studio-dark transition-colors"
                                 />
                                 <button
                                   type="button"
                                   onClick={handleCopyLink}
                                   className="p-1 px-2.5 bg-studio-light border border-studio-ash text-studio-muted hover:text-studio-dark transition-colors flex items-center justify-center cursor-pointer"
-                                  title="Copy Tide Pay Link"
+                                  title="Copy Payment Link"
                                 >
                                   {copiedLink ? <Check className="h-3.5 w-3.5 text-emerald-600 animate-bounce" /> : <Copy className="h-3.5 w-3.5" />}
                                 </button>
@@ -570,7 +571,7 @@ Thank you for your business.
                                 <span className="animate-pulse">Authorising Secure Connection...</span>
                               ) : (
                                 <>
-                                  Place Secure Order with Tide
+                                  Place Secure Order
                                   <ExternalLink className="h-3.5 w-3.5" />
                                 </>
                               )}
@@ -590,7 +591,7 @@ Thank you for your business.
                             No orders placed yet.
                           </p>
                           <p className="font-sans text-xs text-studio-muted max-w-xs mx-auto leading-relaxed">
-                            Once you make a purchase or book consultation scopes via our Tide gate, your dynamic order tracing logs will display here automatically.
+                            Once you make a purchase or book consultation scopes via our secure gate, your dynamic order tracing logs will display here automatically.
                           </p>
                         </div>
                       ) : (
@@ -643,8 +644,8 @@ Thank you for your business.
                                   </span>
                                 </div>
 
-                                {/* Tide payment resolution triggers */}
-                                {ord.status === 'Awaiting Tide Payment' && (
+                                {/* payment resolution triggers */}
+                                {ord.status === 'Awaiting Payment' && (
                                   <div className="pt-2 flex gap-2">
                                     <button
                                       onClick={() => {
@@ -661,13 +662,13 @@ Thank you for your business.
                                       rel="noreferrer"
                                       className="flex-1 py-2 bg-studio-dark hover:bg-studio-bronze text-studio-light text-center text-[10px] font-mono uppercase tracking-wider transition-colors flex items-center justify-center gap-1 cursor-pointer"
                                     >
-                                      Go to Tide
+                                      Go to Payment Page
                                       <ExternalLink className="h-3 w-3" />
                                     </a>
                                   </div>
                                 )}
 
-                                <div className={`pt-2 ${ord.status !== 'Awaiting Tide Payment' ? '' : 'border-t border-studio-ash/10 mt-2'} flex`}>
+                                <div className={`pt-2 ${ord.status !== 'Awaiting Payment' ? '' : 'border-t border-studio-ash/10 mt-2'} flex`}>
                                   <button
                                     onClick={() => handleDownloadReceipt(ord)}
                                     className="w-full py-2 border border-studio-ash/60 bg-studio-cream hover:bg-studio-dark hover:text-studio-light hover:border-studio-dark text-[10px] font-mono uppercase tracking-wider text-center transition-colors cursor-pointer flex items-center justify-center gap-1.5"
@@ -704,7 +705,7 @@ Thank you for your business.
               <div className="p-6 bg-studio-dark text-studio-light flex justify-between items-start">
                 <div>
                   <span className="font-mono text-[8px] uppercase tracking-widest text-studio-bronze block mb-1">
-                    TIDE SECURE DIGITAL INVOICE
+                    SECURE DIGITAL INVOICE
                   </span>
                   <h3 className="font-serif text-2xl font-light">
                     Receipt // {currentInvoice.id}
@@ -733,10 +734,10 @@ Thank you for your business.
                       ISSUED BY:
                     </span>
                     <strong className="block text-studio-dark font-serif text-sm">
-                      SALTEDHASH Studio
+                      {businessConfig.name} Studio
                     </strong>
-                    <span className="text-studio-muted block">Bengaluru, India</span>
-                    <span className="text-studio-muted block">studio@saltedhash.org</span>
+                    <span className="text-studio-muted block">{businessConfig.address}</span>
+                    <span className="text-studio-muted block">{businessConfig.email}</span>
                   </div>
                   <div>
                     <span className="block font-mono text-[9px] uppercase text-studio-muted">
@@ -783,14 +784,14 @@ Thank you for your business.
                   </div>
                 </div>
 
-                {/* Tide Pay Link Integration Panel */}
+                {/* Pay Link Integration Panel */}
                 <div className="bg-[#f0ece1] border border-studio-ash/80 p-5 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
                   <div className="md:col-span-8 space-y-3">
                     <span className="inline-flex items-center gap-1.5 font-mono text-[9px] text-[#4f5c4b] font-bold uppercase">
-                      <QrCode className="h-4 w-4" /> SCAN TO PAY VIA TIDE
+                      <QrCode className="h-4 w-4" /> SCAN TO PAY
                     </span>
                     <p className="text-[10px] text-[#5c6456] leading-relaxed">
-                      Scan the interactive dynamic payment QR code with any UPI banking app, or click the link below to resolve the transaction with your Tide Account.
+                      Scan the interactive dynamic payment QR code with any UPI banking app, or click the link below to resolve the transaction with your payment account.
                     </p>
                     <a
                       href={currentInvoice.paymentLink}
@@ -798,7 +799,7 @@ Thank you for your business.
                       rel="noreferrer"
                       className="px-3.5 py-1.5 bg-[#4f5c4b] text-studio-light text-[10px] font-mono uppercase tracking-wider inline-block hover:bg-[#343e31] transition-all cursor-pointer"
                     >
-                      Process Tide Transfer
+                      Process Transfer
                     </a>
                   </div>
 
@@ -827,14 +828,14 @@ Thank you for your business.
 
                 <div className="bg-studio-ash/20 border border-studio-ash/40 p-4 rounded-none text-center">
                   <p className="text-[10px] text-studio-muted font-light">
-                    Once paid, email your transaction receipt reference code <strong>{currentInvoice.id}</strong> to <a href="mailto:billing@saltedhash.org" className="underline font-mono text-studio-dark">billing@saltedhash.org</a>. Our automated billing engine will verify the Tide balance and move your order status to <strong>Processing</strong> within minutes.
+                    Once paid, email your transaction receipt reference code <strong>{currentInvoice.id}</strong> to <a href={`mailto:${businessConfig.billingEmail}`} className="underline font-mono text-studio-dark">{businessConfig.billingEmail}</a>. Our automated billing engine will verify the balance and move your order status to <strong>Processing</strong> within minutes.
                   </p>
                 </div>
               </div>
 
               {/* Footer */}
               <div className="p-4 bg-studio-light border-t border-studio-ash/40 flex justify-between items-center text-xs font-mono text-studio-muted">
-                <span>Secure Tide Portal v1.0.4</span>
+                <span>Secure Payment Portal v1.0.4</span>
                 <span className="flex items-center gap-1">
                   <ClipboardCheck className="h-3 w-3 text-[#4f5c4b]" /> Verified Signature
                 </span>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, Cpu, Layers, Sparkles, Code2, ShieldAlert, CheckCircle, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
+import { businessConfig } from '../config/businessConfig';
 import { VENTURES, SERVICES } from '../data';
 import { Venture } from '../types';
 import ScrollReveal from './ScrollReveal';
@@ -66,7 +67,7 @@ export default function HomeView({ setActiveTab, onSelectVenture }: HomeViewProp
             variants={itemVariants}
             className="font-sans text-lg sm:text-xl text-studio-muted font-light max-w-2xl leading-relaxed"
           >
-            SALTEDHASH is a logic-led product lab combining severe engineering discipline, commercial strategy, and modern typography to build high-trust digital platforms and consumer ventures.
+            {businessConfig.name} is a logic-led product lab combining severe engineering discipline, commercial strategy, and modern typography to build high-trust digital platforms and consumer ventures.
           </motion.p>
 
           {/* CTAs */}
@@ -267,7 +268,7 @@ export default function HomeView({ setActiveTab, onSelectVenture }: HomeViewProp
         <ScrollReveal className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-3xl mb-16">
             <span className="font-mono text-xs text-studio-bronze uppercase tracking-widest block mb-2">
-              WHY SALTEDHASH
+              WHY {businessConfig.name}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-light text-studio-light tracking-tight">
               An intense alignment with structure, substance, and high trust.

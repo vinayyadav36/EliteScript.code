@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Terminal, Shield, Lightbulb, Compass, Award } from 'lucide-react';
+import { businessConfig } from '../config/businessConfig';
 import { motion } from 'motion/react';
 
 export default function AboutView() {
@@ -60,11 +61,11 @@ export default function AboutView() {
 
           <div className="pt-4 border-t border-studio-ash/60 flex justify-between text-xs font-mono text-studio-muted">
             <div>
-              <span className="block uppercase tracking-wider font-semibold text-studio-dark">VINAY Yadav</span>
-              <span className="block">Managing Partner & Principal Architect</span>
+              <span className="block uppercase tracking-wider font-semibold text-studio-dark">{businessConfig.founderName}</span>
+              <span className="block">{businessConfig.founderRole}</span>
             </div>
             <div className="text-right">
-              <span className="block uppercase tracking-wider font-semibold text-studio-dark">REWARI HR</span>
+              <span className="block uppercase tracking-wider font-semibold text-studio-dark">{businessConfig.addressSecondary}</span>
               <span className="block">Venture Operations HQ</span>
             </div>
           </div>

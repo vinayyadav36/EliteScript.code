@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { businessConfig } from '../config/businessConfig';
 
 interface NavbarProps {
   activeTab: string;
@@ -55,7 +56,9 @@ export default function Navbar({ activeTab, setActiveTab, onContactPrefill, cart
             className="flex items-center gap-2 group cursor-pointer text-left"
           >
             <span className="font-serif text-xl md:text-2xl font-semibold tracking-wider transition-colors duration-300 group-hover:text-studio-bronze">
-              SALTED<span className="text-studio-bronze font-light font-sans">HASH</span>
+              {businessConfig.name === 'SALTEDHASH' ? (
+                <>SALTED<span className="text-studio-bronze font-light font-sans">HASH</span></>
+              ) : businessConfig.name}
             </span>
             <div className="h-1.5 w-1.5 rounded-full bg-studio-bronze animate-pulse" />
           </button>
@@ -196,7 +199,7 @@ export default function Navbar({ activeTab, setActiveTab, onContactPrefill, cart
 
             <div className="border-t border-studio-ash/60 pt-6">
               <p className="font-mono text-[10px] uppercase tracking-widest text-studio-muted mb-2">
-                SALTEDHASH Product Lab
+                {businessConfig.name} Product Lab
               </p>
               <p className="text-xs text-studio-muted font-light leading-relaxed">
                 A logic-led, problem-first, high-trust venture studio and product engineering foundry.

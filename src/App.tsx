@@ -42,6 +42,39 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
+  const [notification, setNotification] = useState<{ id: string; status: string } | null>(null);
+
+  useEffect(() => {
+    const checkNotifications = () => {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('saltedhash_notification_')) {
+          try {
+            const notif = JSON.parse(localStorage.getItem(key) || '{}');
+            if (notif && !notif.read) {
+              setNotification(notif);
+              break;
+            }
+          } catch (e) {
+            console.error('Failed to parse notification:', e);
+          }
+        }
+      }
+    };
+
+    checkNotifications();
+    const interval = setInterval(checkNotifications, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleDismissNotification = () => {
+    if (notification) {
+      const key = `saltedhash_notification_${notification.id}`;
+      localStorage.setItem(key, JSON.stringify({ ...notification, read: true }));
+      setNotification(null);
+    }
+  };
+
   // Prefill contact form states
   const [prefilledInterest, setPrefilledInterest] = useState<string | null>(null);
   const [prefilledType, setPrefilledType] = useState<'service' | 'preorder' | null>(null);
@@ -85,7 +118,7 @@ export default function App() {
   };
 
   const handlePlaceOrder = (order: Order) => {
-    console.log('Secure Tide order created:', order);
+    console.log('Secure order created:', order);
     setIsCartOpen(false); // Close cart drawer
     setConfirmedOrder(order); // Trigger confirmation modal
   };
@@ -94,6 +127,28 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-studio-light text-studio-dark selection:bg-studio-bronze/20 select-text">
+      {/* Alert / Notification Banner */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="w-full bg-[#4f5c4b] text-studio-light px-4 py-2 text-center text-xs font-mono flex justify-between items-center z-50 border-b border-studio-ash/20"
+          >
+            <span className="mx-auto">
+              ✓ Order <strong>#{notification.id}</strong> status updated to: <strong className="underline text-studio-bronze">{notification.status}</strong>.
+            </span>
+            <button
+              onClick={handleDismissNotification}
+              className="text-[10px] uppercase font-bold hover:text-studio-bronze border border-studio-light/40 px-2 py-0.5 ml-2 cursor-pointer transition-colors"
+            >
+              Dismiss
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Navigation */}
       <Navbar
         activeTab={activeTab}

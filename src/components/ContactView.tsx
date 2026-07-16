@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShieldCheck, ArrowUpRight, Check, AlertCircle, RefreshCw, Cpu, Send, Mail, Building } from 'lucide-react';
 import { InquiryFormState } from '../types';
 import { submitContactLead, isAppwriteConfigured } from '../lib/appwrite';
+import { businessConfig } from '../config/businessConfig';
 
 interface ContactViewProps {
   prefilledInterest: string | null;
@@ -421,11 +422,11 @@ export default function ContactView({ prefilledInterest, prefilledType, clearPre
             <div className="space-y-2 text-xs font-mono text-studio-silver">
               <div className="flex items-center gap-2">
                 <Mail className="h-3.5 w-3.5 text-studio-bronze" />
-                <a href="mailto:studio@saltedhash.org" className="hover:text-studio-bronze transition-colors">studio@saltedhash.org</a>
+                <a href={`mailto:${businessConfig.email}`} className="hover:text-studio-bronze transition-colors">{businessConfig.email}</a>
               </div>
               <div className="flex items-center gap-2">
                 <Building className="h-3.5 w-3.5 text-studio-bronze" />
-                <span>Rewari, HR, IN</span>
+                <span>{businessConfig.addressSecondary}</span>
               </div>
             </div>
           </div>
