@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowUpRight, Cpu, HelpCircle, Server, Database, Key, X, ExternalLink, Check, Network } from 'lucide-react';
+import { ArrowUpRight, Cpu, Server, Database, X, ExternalLink, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { VENTURES } from '../data';
 import { Venture } from '../types';
+import { businessConfig } from '../config/businessConfig';
 
 interface VenturesViewProps {
   activeTab: string;
@@ -147,6 +148,18 @@ export default function VenturesView({ activeTab, setActiveTab, selectedVenture,
                 {v.id === 'triu-naturals' ? 'Explore Premium Experience' : 'Deconstruct Technical Architecture'}
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </button>
+              {v.id === 'shri-nandi' && businessConfig.shriNandiPwaUrl && (
+                <a
+                  href={businessConfig.shriNandiPwaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-mono uppercase tracking-widest text-studio-bronze hover:text-studio-dark transition-colors duration-200 flex items-center gap-1 cursor-pointer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Explore App
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
             </div>
           </div>
         ))}

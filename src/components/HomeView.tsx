@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, Cpu, Layers, Sparkles, Code2, ShieldAlert, CheckCircle, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { businessConfig } from '../config/businessConfig';
 import { VENTURES, SERVICES } from '../data';

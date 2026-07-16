@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Check, Mail, ClipboardCheck } from 'lucide-react';
+import { X, Mail } from 'lucide-react';
 import { Order } from '../types';
 
 interface OrderConfirmationModalProps {

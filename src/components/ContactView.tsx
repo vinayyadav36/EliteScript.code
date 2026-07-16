@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, ArrowUpRight, Check, AlertCircle, RefreshCw, Cpu, Send, Mail, Building } from 'lucide-react';
+import { ShieldCheck, ArrowUpRight, AlertCircle, RefreshCw, Cpu, Mail, Building } from 'lucide-react';
 import { InquiryFormState } from '../types';
 import { submitContactLead, isAppwriteConfigured } from '../lib/appwrite';
 import { businessConfig } from '../config/businessConfig';

@@ -179,6 +179,20 @@ export const SERVICES: Service[] = [
       'Comprehensive reporting package detailing actionable patches and timeline priorities'
     ],
     capabilities: ['Static Code Analysis', 'OWASP Top 10 Auditing', 'IAM Security Audits', 'Vulnerability Remediation']
+  },
+  {
+    id: 'shri-nandi-marketing',
+    title: 'Shri Nandi Marketing Services',
+    category: 'Marketing & Business Consultancy',
+    tagline: 'Programmatic local marketing and automated customer acquisition pipelines.',
+    description: 'We construct full-funnel automated marketing ecosystems that dominate local search. By mapping keyword vacancies and deploying programmatic SEO, we consistently place your service business in front of high-intent local buyers.',
+    details: [
+      'Automated Google Business Profile synchronization and reputation management',
+      'Hyper-localized landing page generation scaled via headless CMS architecture',
+      'Custom lead-capture QR funnels and automated SMS follow-up pipelines',
+      'Performance reporting dashboards showing exact acquisition costs per channel'
+    ],
+    capabilities: ['Programmatic SEO', 'Local GBP Optimization', 'Review Automation', 'Lead Routing Pipelines']
   }
 ];
 

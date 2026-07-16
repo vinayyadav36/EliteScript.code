@@ -22,6 +22,14 @@ export interface Service {
   capabilities: string[];
 }
 
+export interface ServicePackage {
+  tierName: string;
+  price: number;
+  description: string;
+  deliverables: string[];
+  tideUrl?: string;
+}
+
 export interface ProcessStep {
   phase: string;
   title: string;
@@ -47,6 +55,8 @@ export interface CartItem {
   qty: number;
   type: 'product' | 'service';
   tierName?: string;
+  variantCode?: string;
+  variantName?: string;
   itemId: string; // original id of product or service
 }
 
@@ -59,6 +69,7 @@ export interface Order {
   total: number;
   status: 'Awaiting Payment' | 'Reference Submitted' | 'Processing' | 'Dispatch Ready' | 'Delivered' | 'Completed';
   paymentLink: string;
+  purchaseChannel: 'app' | 'flipkart' | 'meesho' | 'tide';
   paymentChannel?: string;
   paymentReference?: string;
 }

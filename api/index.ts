@@ -61,10 +61,9 @@ app.post('/api/orders', (req, res) => {
 
   const orders = readOrders();
   const exists = orders.some((o: any) => o.id === order.id);
-  let updatedOrders = [...orders];
 
   if (!exists) {
-    updatedOrders = [order, ...orders];
+    const updatedOrders = [order, ...orders];
     writeOrders(updatedOrders);
   }
 

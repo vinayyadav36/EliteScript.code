@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpRight, Check, Send, ShieldAlert, Cpu } from 'lucide-react';
+import { ArrowUpRight, Check, Send, Cpu } from 'lucide-react';
 import { businessConfig } from '../config/businessConfig';
 
 interface FooterProps {

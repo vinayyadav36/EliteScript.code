@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, ChevronDown, ChevronUp, Cpu, Network, Rocket, Layers, Code, ShieldCheck, Terminal, Lightbulb, ShoppingBag } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, ChevronUp, Cpu, Layers, Rocket, ShieldCheck, Terminal, ShoppingBag, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { businessConfig } from '../config/businessConfig';
 import { SERVICES, PROCESS_STEPS } from '../data';
-import { Service } from '../types';
+import { Service, ServicePackage } from '../types';
 import ScrollReveal from './ScrollReveal';
 import QuickViewModal, { QuickViewData } from './QuickViewModal';
 import { fetchServices } from '../lib/appwrite';
@@ -13,13 +13,6 @@ interface StudioViewProps {
   onPrefillService?: (serviceName: string) => void;
   onAddToCart: (item: { id: string; name: string; price: number; type: 'product' | 'service'; itemId: string; qty: number; tierName: string }) => void;
   onCartOpen: () => void;
-}
-
-interface ServicePackage {
-  tierName: string;
-  price: number; // in INR
-  description: string;
-  deliverables: string[];
 }
 
 const SERVICE_PACKAGES: Record<string, ServicePackage[]> = {
@@ -130,6 +123,29 @@ const SERVICE_PACKAGES: Record<string, ServicePackage[]> = {
       description: 'Hands-on refactoring of query parameters, state routes, and API authentications to shield system integrity.',
       deliverables: ['SQL-injection safe codebases', 'Encrypted environment layouts', 'Signed structural audit report']
     }
+  ],
+  'shri-nandi-marketing': [
+    {
+      tierName: import.meta.env.VITE_SHRI_NANDI_PLAN_1_NAME || 'Starter Plan',
+      price: parseInt(import.meta.env.VITE_SHRI_NANDI_PLAN_1_PRICE || '50000', 10),
+      description: 'Foundational local SEO infrastructure setup for early-stage growth.',
+      deliverables: ['Google Business Profile optimization', 'Initial keyword mapping', 'Basic review funnel setup'],
+      tideUrl: import.meta.env.VITE_SHRI_NANDI_PLAN_1_TIDE_URL || ''
+    },
+    {
+      tierName: import.meta.env.VITE_SHRI_NANDI_PLAN_2_NAME || 'Growth Plan',
+      price: parseInt(import.meta.env.VITE_SHRI_NANDI_PLAN_2_PRICE || '150000', 10),
+      description: 'Aggressive multi-channel acquisition system designed for rapid scaling.',
+      deliverables: ['Programmatic landing pages', 'Automated CRM sync', 'Custom SMS follow-up pipelines'],
+      tideUrl: import.meta.env.VITE_SHRI_NANDI_PLAN_2_TIDE_URL || ''
+    },
+    {
+      tierName: import.meta.env.VITE_SHRI_NANDI_PLAN_3_NAME || 'Enterprise Plan',
+      price: parseInt(import.meta.env.VITE_SHRI_NANDI_PLAN_3_PRICE || '350000', 10),
+      description: 'Complete regional dominance pipeline for multi-location businesses.',
+      deliverables: ['Dedicated multi-region headless CMS', 'Advanced competitor scraping', 'Direct ROI tracking dashboards'],
+      tideUrl: import.meta.env.VITE_SHRI_NANDI_PLAN_3_TIDE_URL || ''
+    }
   ]
 };
 
@@ -142,7 +158,13 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
 
   const [quickViewItem, setQuickViewItem] = useState<QuickViewData | null>(null);
 
-  const categories = ['All', 'Intelligence', 'Engineering', 'Execution', 'Aesthetics', 'Efficiency', 'Security'];
+  // Carousel States
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [carouselPaused, setCarouselPaused] = useState(false);
+  const [carouselUserInteracted, setCarouselUserInteracted] = useState(false);
+  const [carouselVisible, setCarouselVisible] = useState(true);
+
+  const categories = ['All', 'Intelligence', 'Engineering', 'Execution', 'Aesthetics', 'Efficiency', 'Security', 'Marketing & Business Consultancy'];
 
   const [services, setServices] = useState<Service[]>(SERVICES);
   const [loading, setLoading] = useState(false);
@@ -210,6 +232,53 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Carousel Logic
+  useEffect(() => {
+    if (carouselPaused || !carouselVisible || services.length === 0) return;
+    const interval = setInterval(() => {
+      setCarouselIndex((prev) => (prev + 1) % services.length);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [carouselPaused, carouselVisible, services.length]);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      setCarouselPaused(true);
+    }
+  }, []);
+
+  const handleCarouselNav = (direction: 'prev' | 'next') => {
+    setCarouselUserInteracted(true);
+    setCarouselPaused(true);
+    if (direction === 'prev') {
+      setCarouselIndex((prev) => (prev === 0 ? services.length - 1 : prev - 1));
+    } else {
+      setCarouselIndex((prev) => (prev + 1) % services.length);
+    }
+  };
+
+  const handleCarouselDotClick = (index: number) => {
+    setCarouselUserInteracted(true);
+    setCarouselPaused(true);
+    setCarouselIndex(index);
+  };
+
+  const openSpecsModal = (service: Service) => {
+    setCarouselUserInteracted(true);
+    setCarouselPaused(true);
+    setQuickViewItem({
+      id: service.id,
+      name: service.title,
+      category: service.category,
+      price: 0,
+      description: service.description,
+      type: 'service',
+      usage: service.details.join('\n'),
+      ingredients: service.capabilities
+    });
+  };
+
   return (
     <div id="studio-view" className="pt-24 min-h-screen">
       {/* Editorial Hero */}
@@ -227,6 +296,95 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
           </p>
         </ScrollReveal>
       </section>
+
+      {/* Featured Services Carousel */}
+      {services.length > 0 && (
+        <section
+          className="py-20 bg-studio-cream border-b border-studio-ash/30"
+          onMouseEnter={() => !carouselUserInteracted && setCarouselPaused(true)}
+          onMouseLeave={() => !carouselUserInteracted && setCarouselPaused(false)}
+        >
+          <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-8">
+            <div className="flex justify-between items-end">
+              <div>
+                <span className="font-mono text-xs text-studio-bronze uppercase tracking-widest block mb-2">
+                  FEATURED
+                </span>
+                <h2 className="font-serif text-3xl md:text-4xl font-light tracking-tight text-studio-dark">
+                  Showcase Gallery
+                </h2>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleCarouselNav('prev')}
+                  className="w-10 h-10 border border-studio-ash flex items-center justify-center text-studio-muted hover:text-studio-dark hover:border-studio-dark transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleCarouselNav('next')}
+                  className="w-10 h-10 border border-studio-ash flex items-center justify-center text-studio-muted hover:text-studio-dark hover:border-studio-dark transition-colors"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="relative overflow-hidden bg-white border border-studio-ash/40 h-[400px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={carouselIndex}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="absolute inset-0 flex flex-col justify-between p-8 md:p-12"
+                >
+                  <div className="space-y-4 max-w-2xl">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-studio-bronze px-2 py-1 bg-studio-cream/50 inline-block border border-studio-ash/30">
+                      {services[carouselIndex].category}
+                    </span>
+                    <h3 className="font-serif text-3xl md:text-5xl text-studio-dark">
+                      {services[carouselIndex].title}
+                    </h3>
+                    <p className="font-sans text-studio-muted leading-relaxed line-clamp-3">
+                      {services[carouselIndex].description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 pt-8">
+                    <button
+                      onClick={() => openSpecsModal(services[carouselIndex])}
+                      className="px-6 py-3 bg-studio-dark text-studio-light text-xs font-mono uppercase tracking-widest hover:bg-studio-bronze transition-colors flex items-center gap-2 cursor-pointer"
+                    >
+                      View Specs <ArrowUpRight className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleServiceSelect(services[carouselIndex].title)}
+                      className="px-6 py-3 border border-studio-ash text-studio-dark text-xs font-mono uppercase tracking-widest hover:border-studio-dark transition-colors cursor-pointer"
+                    >
+                      Inquire
+                    </button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Dots */}
+            <div className="flex justify-center gap-3 pt-4">
+              {services.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleCarouselDotClick(idx)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    idx === carouselIndex ? 'bg-studio-bronze w-6' : 'bg-studio-ash hover:bg-studio-muted'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Services Grid & Interactive Accordions */}
       <section className="py-24 border-b border-studio-ash/30">
@@ -443,27 +601,49 @@ export default function StudioView({ setActiveTab, onPrefillService, onAddToCart
 
                                     {/* Instant E-Commerce Add Button */}
                                     <div className="pt-2 flex gap-2 flex-wrap">
+                                      {srv.category === 'Marketing & Business Consultancy' ? (
+                                        activePack.tideUrl ? (
+                                          <a
+                                            href={activePack.tideUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex-1 py-3.5 bg-studio-dark hover:bg-studio-bronze text-studio-light text-xs font-mono uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                                          >
+                                            Book Now on Tide
+                                            <ArrowUpRight className="h-4 w-4" />
+                                          </a>
+                                        ) : (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleServiceSelect(`${srv.title} - ${activePack.tierName}`)}
+                                            className="flex-1 py-3.5 bg-studio-ash text-studio-dark hover:bg-studio-bronze text-xs font-mono uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                                          >
+                                            Contact for Pricing
+                                          </button>
+                                        )
+                                      ) : (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setQuickViewItem({
+                                              id: srv.id,
+                                              name: srv.title,
+                                              category: srv.category,
+                                              price: activePack.price,
+                                              description: activePack.description,
+                                              type: 'service',
+                                              tierName: activePack.tierName
+                                            });
+                                          }}
+                                          className="flex-1 py-3.5 bg-studio-dark hover:bg-studio-bronze text-studio-light text-xs font-mono uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                                        >
+                                          Quick View & Book
+                                          <ShoppingBag className="h-4 w-4" />
+                                        </button>
+                                      )}
                                       <button
                                         type="button"
-                                        onClick={() => {
-                                          setQuickViewItem({
-                                            id: srv.id,
-                                            name: srv.title,
-                                            category: srv.category,
-                                            price: activePack.price,
-                                            description: activePack.description,
-                                            type: 'service',
-                                            tierName: activePack.tierName
-                                          });
-                                        }}
-                                        className="flex-1 py-3.5 bg-studio-dark hover:bg-studio-bronze text-studio-light text-xs font-mono uppercase tracking-widest transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                                      >
-                                        Quick View & Book
-                                        <ShoppingBag className="h-4 w-4" />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleServiceSelect(srv.title)}
+                                        onClick={() => handleServiceSelect(`${srv.title} - ${activePack.tierName}`)}
                                         className="px-4 py-3.5 border border-studio-dark/40 text-studio-dark hover:bg-studio-dark/5 text-xs font-mono uppercase tracking-widest transition-colors cursor-pointer"
                                       >
                                         Discuss Scope

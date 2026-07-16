@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ShoppingBag, ArrowUpRight } from 'lucide-react';
-import { businessConfig, getProductExternalLinks } from '../config/businessConfig';
+import { getProductExternalLinks } from '../config/businessConfig';
 
 export interface QuickViewData {
   id: string;

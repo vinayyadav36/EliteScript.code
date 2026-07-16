@@ -34,7 +34,7 @@ export default function CartDrawer({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
-  const [merchantPayLink, setMerchantPayLink] = useState('https://web.paymentgateway.com/pay/saltedhash');
+  const merchantPayLink = businessConfig.paymentGatewayUrl;
   const [isCheckoutSubmitting, setIsCheckoutSubmitting] = useState(false);
 
   // Order placement micro-interaction success states
@@ -190,7 +190,8 @@ Thank you for your business.
         items: [...cart],
         total: totalInr,
         status: 'Awaiting Payment',
-        paymentLink: `${merchantPayLink}?ref=${orderId}&amount=${(totalInr * currencyRates[currency]).toFixed(2)}&currency=${currency}`
+        paymentLink: merchantPayLink ? `${merchantPayLink}?ref=${orderId}&amount=${(totalInr * currencyRates[currency]).toFixed(2)}&currency=${currency}` : '',
+        purchaseChannel: 'app'
       };
 
       // Real integration with our custom Express backend API
@@ -530,7 +531,7 @@ Thank you for your business.
                                 <input
                                   type="text"
                                   value={merchantPayLink}
-                                  onChange={(e) => setMerchantPayLink(e.target.value)}
+                                  readOnly
                                   placeholder="e.g. https://payment.gateway.com/pay/..."
                                   className="flex-1 bg-studio-light border border-studio-ash/60 px-2 py-1 text-[10px] font-mono outline-hidden focus:border-studio-dark transition-colors"
                                 />
@@ -656,15 +657,21 @@ Thank you for your business.
                                     >
                                       Pay / Scan Invoice
                                     </button>
-                                    <a
-                                      href={ord.paymentLink}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="flex-1 py-2 bg-studio-dark hover:bg-studio-bronze text-studio-light text-center text-[10px] font-mono uppercase tracking-wider transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                                    >
-                                      Go to Payment Page
-                                      <ExternalLink className="h-3 w-3" />
-                                    </a>
+                                    {ord.paymentLink ? (
+                                      <a
+                                        href={ord.paymentLink}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex-1 py-2 bg-studio-dark hover:bg-studio-bronze text-studio-light text-center text-[10px] font-mono uppercase tracking-wider transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                                      >
+                                        Go to Payment Page
+                                        <ExternalLink className="h-3 w-3" />
+                                      </a>
+                                    ) : (
+                                      <div className="flex-1 py-2 bg-studio-ash text-studio-muted text-center text-[10px] font-mono uppercase tracking-wider flex items-center justify-center gap-1">
+                                        Payment link not configured
+                                      </div>
+                                    )}
                                   </div>
                                 )}
 
@@ -793,20 +800,26 @@ Thank you for your business.
                     <p className="text-[10px] text-[#5c6456] leading-relaxed">
                       Scan the interactive dynamic payment QR code with any UPI banking app, or click the link below to resolve the transaction with your payment account.
                     </p>
-                    <a
-                      href={currentInvoice.paymentLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-3.5 py-1.5 bg-[#4f5c4b] text-studio-light text-[10px] font-mono uppercase tracking-wider inline-block hover:bg-[#343e31] transition-all cursor-pointer"
-                    >
-                      Process Transfer
-                    </a>
+                    {currentInvoice.paymentLink ? (
+                      <a
+                        href={currentInvoice.paymentLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3.5 py-1.5 bg-[#4f5c4b] text-studio-light text-[10px] font-mono uppercase tracking-wider inline-block hover:bg-[#343e31] transition-all cursor-pointer"
+                      >
+                        Process Transfer
+                      </a>
+                    ) : (
+                      <div className="px-3.5 py-1.5 bg-studio-ash text-studio-muted text-[10px] font-mono uppercase tracking-wider inline-block">
+                        Payment link not configured
+                      </div>
+                    )}
                   </div>
 
                   {/* Simulated QR Code for Scan to Pay */}
                   <div className="md:col-span-4 flex flex-col items-center justify-center">
                     <div className="bg-white p-2.5 border border-studio-ash/80 shadow-xs relative group">
-                      <div className="grid grid-cols-5 gap-0.5 w-16 h-16 opacity-90">
+                      <div className={`grid grid-cols-5 gap-0.5 w-16 h-16 opacity-90 ${!currentInvoice.paymentLink ? 'grayscale opacity-30' : ''}`}>
                         {Array.from({ length: 25 }).map((_, idx) => (
                           <div
                             key={idx}

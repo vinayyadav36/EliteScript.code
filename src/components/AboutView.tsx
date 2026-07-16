@@ -1,7 +1,6 @@
 import React from 'react';
-import { Sparkles, Terminal, Shield, Lightbulb, Compass, Award } from 'lucide-react';
+import { Terminal, Shield, Compass, Award } from 'lucide-react';
 import { businessConfig } from '../config/businessConfig';
-import { motion } from 'motion/react';
 
 export default function AboutView() {
   return (

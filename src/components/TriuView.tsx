@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, HelpCircle, Leaf, ShieldCheck, ShoppingBag, Droplets, Calendar, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Leaf, ShoppingBag, Droplets, Calendar, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import QuickViewModal, { QuickViewData } from './QuickViewModal';
 import { fetchActiveProducts } from '../lib/appwrite';
 import { businessConfig, getProductExternalLinks } from '../config/businessConfig';
 
+import { CartItem } from '../types';
+
 interface TriuViewProps {
   setActiveTab: (tab: string) => void;
   onPrefillPreorder?: (productName: string) => void;
-  onAddToCart: (item: { id: string; name: string; price: number; type: 'product' | 'service'; itemId: string; qty: number }) => void;
+  onAddToCart: (item: CartItem) => void;
   onCartOpen: () => void;
 }
 
@@ -208,18 +210,20 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
   };
 
   const activeProduct = products.find(p => p.id === selectedProduct) || products[0];
-  const activeVariant = activeProduct?.variants?.find(v => v.name === selectedVariantName);
 
-  const activePrice = activeVariant ? activeVariant.price : (activeProduct?.price || 0);
-  const activeAvailable = activeVariant ? activeVariant.available : (activeProduct?.available || 0);
-  const activeCapacity = activeVariant ? activeVariant.capacity : (activeProduct?.capacity || 1);
-  const activeBatchNum = activeVariant ? activeVariant.batchNum : (activeProduct?.batchNum || 'TRIU-X');
-  const activeVolume = activeVariant ? activeVariant.name : (activeProduct?.volume || '');
+  if (!activeProduct) {
+    return null;
+  }
+
+  const activeVariant = activeProduct.variants?.find(v => v.name === selectedVariantName);
+
+  const activePrice = activeVariant ? activeVariant.price : (activeProduct.price || 0);
+  const activeAvailable = activeVariant ? activeVariant.available : (activeProduct.available || 0);
+  const activeCapacity = activeVariant ? activeVariant.capacity : (activeProduct.capacity || 1);
+  const activeBatchNum = activeVariant ? activeVariant.batchNum : (activeProduct.batchNum || 'TRIU-X');
 
   const variantCode = activeVariant ? activeVariant.name.replace('Pack of ', '') : undefined;
-  const productLinks = activeProduct 
-    ? getProductExternalLinks(activeProduct, variantCode) 
-    : { flipkart: '', meesho: '', whatsapp: '' };
+  const productLinks = getProductExternalLinks(activeProduct, variantCode);
 
   return (
     <div id="triu-view" className="pt-24 min-h-screen bg-[#f5f4ef] text-[#2c3327]">
@@ -244,7 +248,8 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
 
           <div className="lg:col-span-5 border border-[#d6d4c5] bg-[#eae8dd]/40 p-8 space-y-6">
             <span className="block font-mono text-[9px] uppercase tracking-widest text-[#4f5c4b] font-semibold">
-              // CRAFT INTEGRITY REPORT
+              {/* CRAFT INTEGRITY REPORT */}
+              CRAFT INTEGRITY REPORT
             </span>
             <div className="space-y-4 text-xs text-[#5c6456] font-light">
               <div className="flex justify-between border-b border-[#d6d4c5] pb-2">
@@ -518,6 +523,28 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
                     </a>
                   )}
 
+                  {/* Tide */}
+                  {productLinks.tideUrl && (
+                    <a
+                      href={productLinks.tideUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-1.5 text-xs text-[#5c6456] hover:text-[#4f5c4b] transition-colors duration-200"
+                    >
+                      <div className="text-[#5c6456]/40 group-hover:text-[#4f5c4b] transition-colors duration-200">
+                        <ShoppingBag className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[9px] uppercase tracking-wider">
+                          {productLinks.tideIsFallback ? 'View on Tide Store' : 'Buy on Tide'}
+                        </span>
+                        {productLinks.tideIsFallback && (
+                          <span className="text-[8px] text-[#5c6456]/70 leading-none">General store — search for this product</span>
+                        )}
+                      </div>
+                    </a>
+                  )}
+
                   {/* WhatsApp */}
                   <a
                     href={productLinks.whatsapp}
@@ -545,7 +572,7 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
                 </span>
                 {/* Lightweight text-only trust badge */}
                 <span className="block text-[9px] text-[#76746f] mt-1 font-sans">
-                  Available on App, {productLinks.flipkart ? 'Flipkart, ' : ''}{productLinks.meesho ? 'Meesho & ' : ''}WhatsApp
+                  Available on App, {productLinks.flipkart ? 'Flipkart, ' : ''}{productLinks.meesho ? 'Meesho, ' : ''}{productLinks.tideUrl ? 'Tide & ' : ''}WhatsApp
                 </span>
               </div>
               <div className="flex flex-wrap gap-2 items-center">
@@ -562,7 +589,9 @@ export default function TriuView({ setActiveTab, onPrefillPreorder, onAddToCart,
                       price: activePrice,
                       type: 'product',
                       itemId: activeProduct.id,
-                      qty: 1
+                      qty: 1,
+                      variantCode: variantCode,
+                      variantName: selectedVariantName || undefined
                     });
                     setSuccessNotice(activeProduct.variants && activeProduct.variants.length > 0
                       ? `${activeProduct.name} (${selectedVariantName})`
